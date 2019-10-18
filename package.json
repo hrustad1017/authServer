@@ -1,0 +1,29 @@
+{
+  "name": "manualserver",
+  "version": "1.0.0",
+  "description": "manual authentication server no passport",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hunter Rustad",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.1.0",
+    "body-parser": "^1.19.0",
+    "connect-redis": "^4.0.2",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "nodemailer": "^6.3.1",
+    "path": "^0.12.7",
+    "pouchdb": "^7.1.1",
+    "pouchdb-find": "^7.1.1",
+    "redis": "^2.8.0",
+    "save": "^2.4.0"
+  }
+}
