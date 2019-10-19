@@ -10,9 +10,13 @@ I will add further documentation soon.
 REQUIREMENTS
 
 nodejs (I use version 12.4.0)
+
 npm (I use version 6.9.0)
+
 couchDB
+
 redis
+
 sendGrid account or another email service that works with nodemailer
 
 AUTHSERVER INSTALLATION INSTRUCTIONS
