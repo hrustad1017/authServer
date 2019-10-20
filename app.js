@@ -1,6 +1,5 @@
 var express = require('express'),
     path = require('path'),
-    // cookieParser = require('cookie-parser'),
     cors = require('cors'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
@@ -9,8 +8,6 @@ var express = require('express'),
     redisStore  = require('connect-redis')(session);
     ejs = require('ejs'),
     dotenv = require('dotenv').config();
-
-// add a redis store for storing sessions
 
 var app = express();
 app.use(cors());
@@ -37,7 +34,6 @@ let sessionOptions = {
 app.use(session(sessionOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-// app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
