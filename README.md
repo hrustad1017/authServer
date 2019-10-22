@@ -5,7 +5,7 @@ to use this authServer you must have nodejs and npm, and CouchDB and Redis insta
 
 authServer needs to have better security if anyone is interested in helping with that as well as adding logging and analytics.
 
-I will add further documentation soon.
+If you want to just install a NPM package I have created authserver-ez which you just need to install, require, and pass an options array to the authServer constructor. Check it out at https://www.npmjs.com/package/authserver-ez
 
 # REQUIREMENTS
 
