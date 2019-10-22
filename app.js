@@ -5,7 +5,7 @@ var express = require('express'),
     session = require('express-session'),
     redis   = require('redis'),
     redisClient = redis.createClient(),
-    redisStore  = require('connect-redis')(session);
+    redisStore  = require('connect-redis')(session),
     ejs = require('ejs'),
     dotenv = require('dotenv').config();
 

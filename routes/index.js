@@ -11,9 +11,10 @@ module.exports = function(app) {
         // console.log(req.body);
         let salt;
         let hash;
+        // console.log(req.body.username);
         var newUser = new User(req.body.name, req.body.email, req.body.username, req.body.password);
         // test to see if user gets built correctly
-        // console.log(newUser);
+        console.log(newUser);
         // console.log(newUser.name);
         // console.log(newUser.email);
         // console.log(newUser.username);
@@ -21,7 +22,6 @@ module.exports = function(app) {
 
         newUser.password = encryptPass(newUser.password, salt, hash);
 
-        // console.log(newUser);
         console.log(newUser.password);
 
         const valid = validatePassword(req.body.password, newUser.password.salt, newUser.password.hash);
@@ -30,16 +30,23 @@ module.exports = function(app) {
         if (valid) {
             let user;
             if (req.body.parent === 'NONE') {
-                user = await createAdminUser(newUser);
+                await createAdminUser(newUser).then(async function(result) {
+                    console.log(result);
+                    var random = await crypto.randomBytes(20);
+                    var token = random.toString('hex');
+                    await addEmailToken(result, token);
+                    sendConfirmEmail(req.body.email, req.headers.host, token, req);
+                });
             } else {
-                user = await createUser(newUser, req.body.parent, req.body.level);
-                console.log(req.body.parent);
-
+                await createUser(newUser, req.body.parent, req.body.level).then(async function(result) {
+                    console.log(result);
+                    var random = await crypto.randomBytes(20);
+                    var token = random.toString('hex');
+                    await addEmailToken(result, token);
+                    sendConfirmEmail(req.body.email, req.headers.host, token, req);
+                });
+                // console.log(req.body.user.parent);
             }
-            var random = await crypto.randomBytes(20);
-            var token = random.toString('hex');
-            addEmailToken(user, token);
-            sendConfirmEmail(user.email, req.headers.host, token);
         }
 
         function validatePassword(pass, salt, hash) {
@@ -100,11 +107,19 @@ module.exports = function(app) {
             });
         }
 
+        // needs to be tested
         async function addEmailToken(user, token) {
             const remoteUsers = new PouchDB(process.env.COUCHCONNECT + '/auth-test-users');
-            user.confirmed = false;
-            user.emailToken = token;
-            return await remoteUsers.put(user).then(function(result) {
+            const doc = await remoteUsers.get(user.id).then(function(result) {
+                result.emailToken = token;
+                return result;
+            }).catch(function(err) {
+                console.log('error getting user in addEmailToken');
+                console.log(err);
+                return;
+            });
+
+            return await remoteUsers.put(doc).then(function(result) {
                 return result;
             }).catch(function(err) {
                 console.log("error updating email token");
@@ -113,7 +128,7 @@ module.exports = function(app) {
             });
         }
 
-        function sendConfirmEmail(email, host, token) {
+        function sendConfirmEmail(email, host, token, request) {
             var uname = process.env.SENDGRIDUNAME;
             var pword = process.env.SENDGRIDPASS;
 
@@ -130,7 +145,7 @@ module.exports = function(app) {
                 from: 'confirmEmail@demo.com',
                 subject: 'Email Confirmation',
             text: 'Hello,\n\n' +
-                'This is an email to confirm the email address for: ' + user.username +
+                'This is an email to confirm the email address for: ' + request.body.username +
                 '. Click the link to confirm.\n' +
                 'http://' + host + '/confirm/' + token
             };
@@ -486,6 +501,9 @@ module.exports = function(app) {
         });
 
         }
+
+        // ================================================
+        // Middleware examples, not actually implemented
 
         function isConfirmed(req, res, next) {
             var confirmed = req.session.confirmed;
