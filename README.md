@@ -7,6 +7,8 @@ authServer needs to have better security if anyone is interested in helping with
 
 If you want to just install a NPM package I have created authserver-ez which you just need to install, require, and pass an options array to the authServer constructor. Check it out at https://www.npmjs.com/package/authserver-ez
 
+If you have questions or comments please email me at hrustad1017@gmail.com
+
 # REQUIREMENTS
 
 nodejs (I use version 12.4.0)
