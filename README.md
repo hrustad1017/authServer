@@ -21,14 +21,23 @@ sendGrid account or another email service that works with nodemailer
 
 AUTHSERVER INSTALLATION INSTRUCTIONS
 
-To use authServer click the green button on the right side of the page that says clone or download. Choose download zip then place the zipped folder in a directory of your choosing. Next, extract all files into a folder (I recommend naming the folder "server"). Open a command prompt or terminal and change working directory to the "server" folder with a command like: cd C:\Users\call4\server then use the command: npm install
-Now all of the nodejs dependencies should be installed and you are ready to run the app with command: node app.js
+To use authServer click the green button on the right side of the page that says clone or download. Choose download zip then place the zipped folder in a directory of your choosing. Next, extract all files into a folder (I recommend naming the folder "server"). Open a command prompt or terminal and change working directory to the "server" folder with a command like:
+
+    cd C:\Users\call4\server 
+
+then use the command:
+
+    npm install
+
+Now all of the nodejs dependencies should be installed and you are ready to run the app with command:
+
+    node app.js
 
 COUCHDB INSTALLATION INSTRUCTIONS
 
 Windows: go to https://couchdb.apache.org/ click on a download of your choice (though you should use the latest stable release) and follow the installer prompts
 
-Linux: follow the instructions here: https://linuxize.com/post/how-to-install-couchdb-on-ubuntu-18-04/ and make sure to add your login credentials to the couchDB connection string
+Linux(Debian): follow the instructions here: https://linuxize.com/post/how-to-install-couchdb-on-ubuntu-18-04/ and make sure to add your login credentials to the couchDB connection string
 
 for more information on couchDB: https://couchdb.apache.org/
 
@@ -36,7 +45,17 @@ REDIS INSTALLATION INSTRUCTIONS
 
 Windows: redis is cannot be easily installed on Windows like it can on Linux, so instead I am using Docker Desktop for Windows and an official redis container image. To do this first create an account at Docker Hub www.hub.docker.com then download Docker Desktop for Windows from Docker Hub. Then use command: docker pull redis  (this will grab the latest image) then use command: docker run -d --name <THENAMEYOUWANT> --publish 6379:6379 redis  (this command runs a detached container with the redis image you pulled, names the container what you want and maps port 6379 of the container to port 6379 of the host computer which is where authServer will be looking for the redis instance. when not in use just use command: docker stop <the name of the container>  and then to start use command: docker start <the name of the container> to delete the container stop it and use command: docker rm <the name of the container>
   
-Linux: make sure your packages and computer are up to date with command: sudo apt-get update   and then: sudo apt-get upgrade  then install redis with command: sudo apt-get install redis-server
+Linux(Debian): make sure your packages and computer are up to date with command:
+
+    sudo apt-get update
+
+and then:
+
+    sudo apt-get upgrade
+
+then install redis with command:
+
+    sudo apt-get install redis-server
   
 for more information on redis: https://redis.io/
 
@@ -44,7 +63,25 @@ NODEJS AND NPM INSTALLATION INSTRUCTIONS
 
 Windows: go to https://nodejs.org/en/ pick a download and follow the installer prompts.
 
-Linux: make sure your packages and computer are up to date with command: sudo apt-get update   and then: sudo apt-get upgrade then use command: sudo apt-get install nodejs  to install nodejs. then use command: sudo apt-get install npm  to install npm
+Linux(Debian): make sure your packages and computer are up to date with command:
+
+    sudo apt-get update
+
+and then:
+
+    sudo apt-get upgrade
+
+then use command:
+
+    sudo apt-get install nodejs
+
+to install nodejs.
+
+then use command:
+
+    sudo apt-get install npm
+
+to install npm
 
 for more information on nodejs and npm: https://nodejs.org/en/
 
@@ -58,11 +95,71 @@ you should create a .env file in the "server" folder and add all of your credent
 
 AUTHSERVER USAGE
 
-start authServer with command: node app.js
+start authServer with command:
+
+    node app.js
+    
+ or:
+ 
+    sudo node app.js
+    
+ if on Linux(Debian) and you need higher privileges
+
 Connect to authServer on port 3000
 if you are using authServer locally it will be http:localhost:3000 and if you are hosting it somewhere like example.com then the connection string would be http:example.com:3000 or if it you have just an IP like 196.96.0.1 then the connection string would be http:196.96.0.1:30000
 To use authServer you just need to send requests to the routes that have been set up like /register to register a user. This means that you can have it connected to pretty much any kind of application or website as long as it can make http requests.
 
 EXAMPLE REQUEST
 
+Written in Angular2/TypeScript
+
+    async onLogin() {
+    
+    const uname = this.loginForm.controls.username.value;
+    
+    const pword = this.loginForm.controls.password.value;
+    
+    const header = new HttpHeaders();
+    
+    header.append('Content-Type', 'application/json');
+
+    await this.http.post('http://localhost:3000/login', {
+      username: uname,
+      password: pword
+    },
+      {headers: header})
+        .subscribe(res => {
+          console.log(res);
+          this.authService.login();
+          this.router.navigateByUrl('/menu/home');
+        }, (err) => {
+          console.log('error loggig in with authServer');
+          console.log(err);
+          this.failToast();
+        });
+
+      }
+
 The routes for authServer are located in routes/index.js and they can be modified for your usage or you can add more routes
+
+RUN IN A CONTAINER
+
+I have included a Dockerfile in the repo to build your authServer implimentation into a containerized image. To do this you need to have Docker installed, Windows: https://docs.docker.com/docker-for-windows/install/ Linux(Debian): https://phoenixnap.com/kb/how-to-install-docker-on-ubuntu-18-04 . Next, change working directory to your "server" folder and run command:
+
+    docker build . -t authserver:latest
+
+To run the container use command:
+
+    docker run --name <whatyourcontainerwillbenamed> --publish 3000:3000
+ 
+  this names the container and runs it with port 3000 of the container to port 3000 of the host computer. This way you will not have to change any configuration if you have been using authServer regularly, or you can change the second port number to have it map container port 3000 to a different port on the host computer.
+  
+ After running for the first time you can use command:
+ 
+    docker stop <nameofcontainer>
+ 
+ to stop the container and command:
+ 
+    docker start <nameofcontainer>
+ 
+ to start the container back up.
