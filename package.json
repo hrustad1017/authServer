@@ -19,7 +19,7 @@
     "ejs": "^2.7.1",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
-    "nodemailer": "^6.3.1",
+    "nodemailer": "^6.4.16",
     "path": "^0.12.7",
     "pouchdb": "^7.1.1",
     "pouchdb-find": "^7.1.1",
