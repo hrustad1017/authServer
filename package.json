@@ -9,7 +9,7 @@
   "author": "Hunter Rustad",
   "license": "ISC",
   "dependencies": {
-    "async": "^3.1.0",
+    "async": "^3.2.2",
     "body-parser": "^1.19.0",
     "connect-redis": "^4.0.2",
     "cookie-parser": "^1.4.4",
